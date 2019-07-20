@@ -10,8 +10,8 @@ import Control.Lens ((&), (.~), (^.))
 
 import           Events.State
 import           Events.State.Types
-import           Events.State.Types.Mode   (InsertMode (..), InsertType (..), Mode (Insert))
-import           Graphics.Vty.Input.Events (Event (EvKey), Key (KEnter, KEsc))
+import           Events.State.Types.Mode   (InsertMode (..), InsertType (..), Mode (Insert, ExternEdit))
+import           Graphics.Vty.Input.Events (Event (EvKey), Key (KEnter, KEsc, KFun))
 import qualified UI.Field                  as F (event)
 
 event :: Event -> Stateful
@@ -31,6 +31,8 @@ event (EvKey KEsc _) state =
         Insert IList IEdit _ -> (write =<<) . (normalMode =<<) $ finishListTitle state
         Insert ITask _ _ -> (write =<<) . (removeBlank =<<) . (normalMode =<<) $ finishTask state
         _ -> pure state
+event (EvKey (KFun 2) _) state =
+    pure (mode .~ ExternEdit $ state)
 event e state =
     pure $
     case state ^. mode of

@@ -39,6 +39,7 @@ data Mode
     | Insert InsertType
              InsertMode
              Field
+    | ExternEdit
     | Modal ModalType
     | Search Bool
              Field

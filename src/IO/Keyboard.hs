@@ -70,4 +70,5 @@ defaultBindings =
     , (BChar 'X', A.ListDelete)
     , (BChar '>', A.ListRight)
     , (BChar '<', A.ListLeft)
+    , (BKey "F2", A.OpenExternalEditor)
     ]

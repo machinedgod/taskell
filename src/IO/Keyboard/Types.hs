@@ -42,4 +42,5 @@ bindingToEvent (BKey "Left")      = pure $ EvKey KLeft []
 bindingToEvent (BKey "Right")     = pure $ EvKey KRight []
 bindingToEvent (BKey "Up")        = pure $ EvKey KUp []
 bindingToEvent (BKey "Down")      = pure $ EvKey KDown []
+bindingToEvent (BKey "F2")        = pure $ EvKey (KFun 2) []
 bindingToEvent _                  = Nothing

@@ -6,13 +6,15 @@ module App
 
 import ClassyPrelude
 
-import Control.Lens ((^.))
+import Control.Lens ((^.), (.~))
 
 import Brick
 import Graphics.Vty              (Mode (BracketedPaste), outputIface, setMode, supportsMode)
 import Graphics.Vty.Input.Events (Event (..))
 
 import qualified Control.FoldDebounce as Debounce
+
+import System.Process          (callProcess)
 
 import Data.Taskell.Date       (currentDay)
 import Data.Taskell.Lists      (Lists)
@@ -94,6 +96,15 @@ handleVtyEvent (send, trigger) actions previousState e = do
         Shutdown -> liftIO (Debounce.close trigger) *> Brick.halt state
         (Modal MoveTo) -> clearAllTitles state *> next send state
         (Insert ITask ICreate _) -> clearList state *> next send state
+        -- *** DEBUG PUKECODE ***
+        -- TODO this so doesn't work. Brick or Graphics.Vty seem to steal
+        --      keyboard events or something.
+        ExternEdit -> do
+            void $ liftIO $ withSystemTempFile
+                                "taskell-extern-edit"
+                                (\fp h -> callProcess "vim" [fp] *> hGetContents h)
+            Brick.continue (mode .~ Modal MoveTo $ state)
+        -- *** End DEBUG PUKECODE ***
         _ -> clearCache previousState *> clearCache state *> next send state
 
 handleEvent ::
